@@ -5,7 +5,7 @@ cpu: .venv/bin/python data/sample .venv/bin/all_set
 	@echo "CPU `grep 'model name' /proc/cpuinfo|head -n1`"
 	@echo -n "Versions: `.venv/bin/python --version`, "
 	@echo -n "`.venv/bin/pip freeze|grep -i torch`, "
-	@echo -n "`.venv/bin/pip opencv|grep -i opencv`, "
+	@echo -n "`.venv/bin/pip freeze|grep -i opencv-python=`, "
 	@echo "`.venv/bin/pip freeze|grep -i albumentations`"
 cpu-single: .venv/bin/python
 	@echo "Running simplethread tests"

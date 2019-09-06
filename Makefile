@@ -18,11 +18,11 @@ data/sample.zip: .venv/bin/python
 	mkdir -p data
 	.venv/bin/pip install gdown
 	.venv/bin/gdown https://drive.google.com/uc?id=1OXr16vkpXVlAuUovYPsIxhohhp-mgnah -O data/sample.zip
-data/sample: data/sample.zip
-	unzip data/sample.zip
+data/sample/: data/sample.zip
+	cd data; unzip sample.zip
 .venv/bin/python:
 	virtualenv --python=python3 .venv
 .venv/bin/all_set:
 	.venv/bin/pip install -r requirements.txt
-	.venv/bin/python -m tests.cpu_preprocess --ncore 1 --start 0 --finish 1
+	.venv/bin/python -m tests.cpu_preprocess --start 0 --finish 1 --ncore 0 --ntimes 1
 	@echo "All set">.venv/bin/all_set

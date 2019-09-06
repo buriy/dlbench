@@ -96,6 +96,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, default="data/sample/")
     parser.add_argument("--ncore", type=int, default=multiprocessing.cpu_count())
+    parser.add_argument("--ntimes", type=int, default=10)
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--start", type=int, default=20)
     parser.add_argument("--finish", type=int, default=120)
@@ -106,12 +107,11 @@ def main():
     args = parse_args()
     assert args.finish > args.start, f"change start and finish"
 
-    n_times = 10
-    print("Running {} times with {} cores".format(n_times, args.ncore))
+    print("Running {} times with {} cores".format(args.ntimes, args.ncore))
 
     times = []
     tmp = 0
-    for i in range(10):
+    for i in range(args.ntimes):
         dataset = FolderDataset(folder_path=args.path)
         vloader = torch.utils.data.DataLoader(dataset, batch_size=args.batch, shuffle=False, num_workers=args.ncore)
         progress_bar = tqdm(enumerate(vloader), total=len(vloader), desc=f"Predicting {i}")
@@ -120,7 +120,7 @@ def main():
             tmp += images.shape[0]
             if n == args.start:
                 t0 = time()
-            if n == args.finish:
+            if n >= args.finish:
                 times.append(time() - t0)
                 break
         progress_bar.close()

@@ -1,4 +1,4 @@
-cpu: .venv/bin/python
+cpu: .venv/bin/python data/sample .venv/bin/all_set
 	@echo "Running multithread tests"
 	sync; sudo su -c "echo 3 > /proc/sys/vm/drop_caches"
 	@.venv/bin/python -m tests.cpu_preprocess
@@ -14,13 +14,15 @@ cpu-single: .venv/bin/python
 	@sleep 5
 	sync; sudo su -c "echo 3 > /proc/sys/vm/drop_caches"
 	@.venv/bin/python -m test.pystone 5000000
-data/sample.zip:
+data/sample.zip: .venv/bin/python
 	mkdir -p data
-	gdown https://drive.google.com/uc?id=1OXr16vkpXVlAuUovYPsIxhohhp-mgnah -O data/sample.zip
-sample: data/sample.zip
+	.venv/bin/pip install gdown
+	.venv/bin/gdown https://drive.google.com/uc?id=1OXr16vkpXVlAuUovYPsIxhohhp-mgnah -O data/sample.zip
+data/sample: data/sample.zip
 	unzip data/sample.zip
 .venv/bin/python:
 	virtualenv --python=python3 .venv
-.venv/bin/allset:
+.venv/bin/all_set:
 	.venv/bin/pip install -r requirements.txt
 	.venv/bin/python -m tests.cpu_preprocess --ncore 1 --start 0 --finish 1
+	@echo "All set">.venv/bin/all_set

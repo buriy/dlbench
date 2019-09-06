@@ -1,4 +1,5 @@
 import argparse
+import multiprocessing
 import os
 import os.path as osp
 import random
@@ -94,7 +95,7 @@ class FolderDataset(torch.utils.data.Dataset):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, default="data/sample/")
-    parser.add_argument("--ncore", type=int, default=16)
+    parser.add_argument("--ncore", type=int, default=multiprocessing.cpu_count())
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--start", type=int, default=20)
     parser.add_argument("--finish", type=int, default=120)
@@ -104,6 +105,9 @@ def parse_args():
 def main():
     args = parse_args()
     assert args.finish > args.start, f"change start and finish"
+
+    n_times = 10
+    print("Running {} times with {} cores".format(n_times, args.ncore))
 
     times = []
     tmp = 0
@@ -119,11 +123,10 @@ def main():
             if n == args.finish:
                 times.append(time() - t0)
                 break
-        del progress_bar
+        progress_bar.close()
+        print(f"Iteration #{i}: {times[-1]:0.1f}")
 
-        print(f"\n{i} iter: {times[-1]:0.1f}")
-
-    print(f"mean {np.mean(times):0.1f}" + "\u00B1" + f"{np.std(times):0.1f}\n")
+    print(f"mean {np.mean(times):0.1f}" + "\u00B1" + f"{np.std(times):0.1f}")
     print(f"speed {args.batch * (args.finish - args.start) / np.mean(times):0.1f} samples/sec")
 
 
